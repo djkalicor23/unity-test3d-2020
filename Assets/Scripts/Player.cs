@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] private Transform groundCheckTransform = null;
     private bool jumpKeyWasPressed;
     private float horizontalInput;
     private Rigidbody rigidbodyComponent;
-    private bool isGrounded;
 
     // Start is called before the first frame update
     void Start()
@@ -18,10 +18,6 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!isGrounded) {
-            return;
-        }
-
         if (Input.GetKeyDown(KeyCode.Space)) {
             jumpKeyWasPressed = true;
         }
@@ -31,18 +27,14 @@ public class Player : MonoBehaviour
 
     // FixedUpdate is called once every physics update
     private void FixedUpdate() {
+        if (Physics.OverlapSphere(groundCheckTransform.position, 0.1f).Length == 1) {
+            return;
+        }
+
         if (jumpKeyWasPressed) {
             rigidbodyComponent.AddForce(Vector3.up * 10, ForceMode.VelocityChange);
             jumpKeyWasPressed = false;
         }
         rigidbodyComponent.velocity = new Vector3(horizontalInput, rigidbodyComponent.velocity.y, 0);
-    }
-
-    private void OnCollisionEnter() {
-        isGrounded = true;
-    }
-
-    private void OnCollisionExit() {
-        isGrounded = false;
     }
 }
