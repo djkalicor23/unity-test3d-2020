@@ -5,6 +5,8 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] private Transform groundCheckTransform = null;
+    [SerializeField] private LayerMask playerMask;
+
     private bool jumpKeyWasPressed;
     private float horizontalInput;
     private Rigidbody rigidbodyComponent;
@@ -27,7 +29,8 @@ public class Player : MonoBehaviour
 
     // FixedUpdate is called once every physics update
     private void FixedUpdate() {
-        if (Physics.OverlapSphere(groundCheckTransform.position, 0.1f).Length == 1) {
+        rigidbodyComponent.velocity = new Vector3(horizontalInput * 3, rigidbodyComponent.velocity.y, 0);
+        if (Physics.OverlapSphere(groundCheckTransform.position, 0.1f, playerMask).Length == 0) {
             return;
         }
 
@@ -35,6 +38,5 @@ public class Player : MonoBehaviour
             rigidbodyComponent.AddForce(Vector3.up * 10, ForceMode.VelocityChange);
             jumpKeyWasPressed = false;
         }
-        rigidbodyComponent.velocity = new Vector3(horizontalInput, rigidbodyComponent.velocity.y, 0);
     }
 }
